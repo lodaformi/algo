@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "D:/MinGW/bin/g++.exe",
+			"args": [  //编译时候的参数
+				"-fdiagnostics-color=always",
+				"-g",  //添加gdb调试选项
+				"${file}",
+				"-o",  //生成可执行文件的名称
+				"${fileDirname}\\${fileBasenameNoExtension}.exe"
+			],
+			"options": {
+				"cwd": "D:/MinGW/bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true  //表示快捷键Ctrl+Shift+B可以运行该任务
+			},
+			"detail": "compiler: D:/MinGW/bin/g++.exe"
+		}
+	]
+}

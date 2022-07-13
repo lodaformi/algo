@@ -17,6 +17,7 @@ private:
     int currentLength;
     node *head, *tail;
 
+
     //移动指针
     node* move(int i) const;
     

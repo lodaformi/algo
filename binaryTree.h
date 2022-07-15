@@ -56,13 +56,28 @@ class binaryTree : public bTree<T> {
 }; 
 
 template <class T>
-void printTree(const binaryTree<t> &t, T flag) {
+void printTree(const binaryTree<T> &t, T flag) {
+    // linkQueue<T> q;
+
+    // q.enQueue(t.root->data);
+    // cout << endl;
+    // while (!q.isEmpty()) {
+    //         char p, l, r;
+    //         p = q.deQueue();
+    //         l = t.lchild(p,  flag);
+    //         r = t.rchild(p,  flag);
+    //         cout << p << "  " << l  << "  " << r << endl;
+    //         if (l != flag) q.enQueue(l);
+    //         if (r != flag) q.enQueue(r);
+    // }
+
     Node *tmp;
     queue<Node*> que;
     que.push(t);
     while (!que.empty())
-    {
-        tmp = que.pop();
+    {   
+        tmp = que.front();
+        que.pop();
         if (tmp->data == flag)
         {
             cout << flag << " ";
@@ -80,14 +95,15 @@ void binaryTree<T>::createTree(T flag) {
     Node *tmp;
     T val, l_val, r_val;
     queue<Node*> que;
-    cout << "请输入跟节点的数据： ";
+    cout << "请输入跟节点的数据：\n ";
     cin >> val;
     root = new Node(val);
     que.push(root);
     while (!que.empty())
     {
-        tmp = que.pop();
-        cout << "请输入" << tmp->data << "的左右孩子(" << flag  << "表示为空";
+        tmp = que.front();
+        que.pop();
+        cout << "请输入" << tmp->data << "的左右孩子(" << flag  << "表示为空)";
         cin >> l_val >> r_val;
         if (l_val != flag)
         {
@@ -97,13 +113,14 @@ void binaryTree<T>::createTree(T flag) {
         {
             que.push(tmp->right = new Node(r_val));
         }
+        cout << endl;
     }
     cout << "create completed!\n";
 }
 
 //查找x节点
 template <class T>
-binaryTree<T>::Node* binaryTree<T>::find(T x, binaryTree<T>::Node *t) const {
+typename binaryTree<T>::Node* binaryTree<T>::find(T x, binaryTree<T>::Node *t) const {
     Node *tmp;
     if (t == nullptr)
     {

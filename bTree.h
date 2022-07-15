@@ -8,7 +8,7 @@ public:
     virtual bool isEmpty() const = 0;
     virtual int size() const = 0;
     virtual T Root(T flag) const = 0;
-    virtual T parent(T x， T flag) const = 0; 
+    virtual T parent(T x, T flag) const = 0; 
     virtual T lchild（T x, T flag) const = 0;
     virtual T rchild（T x, T flag) const = 0;
     virtual void delLeft(T x) = 0;

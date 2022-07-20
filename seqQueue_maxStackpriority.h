@@ -11,16 +11,36 @@ private:
     int currentSize;
     void doubleSpace();    
     void percolateDown(int hole);
+    void preOrder(int idx);
 public:
     seqQueue_maxStack(int initSize=100);
-    seqQueue_maxStack(const Type *items, int size); //带初值的构造函数
+    seqQueue_maxStack(const elemType *items, int size); //带初值的构造函数
     bool isEmpty() {return currentSize == 0;}
     void enQueue(const elemType &x);
     elemType deQueue();
     elemType getHead() {return data[1];}
     void buildHeap();
     ~seqQueue_maxStack();
+    void preOrder();
 };
+
+template <class elemType>
+void seqQueue_maxStack<elemType>::preOrder() {
+    cout << "preorder: ";
+    preOrder(1);
+} 
+
+template <class elemType>
+void seqQueue_maxStack<elemType>::preOrder(int idx) {
+    if (idx > currentSize)
+    {
+        return;
+    }
+    
+    cout << data[idx] << " ";
+    preOrder(idx * 2);
+    preOrder(idx*2 + 1);
+}
 
 //以逆向层次的次序对节点调用percolateDown
 template <class elemType>
@@ -33,7 +53,7 @@ void seqQueue_maxStack<elemType>::buildHeap() {
 }
 
 template <class elemType>
-seqQueue_maxStack<elemType>::seqQueue_maxStack(const Type *items, int size) {
+seqQueue_maxStack<elemType>::seqQueue_maxStack(const elemType *items, int size) {
     maxSize = size + 10;
     currentSize = size;
     data = new elemType[maxSize];

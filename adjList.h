@@ -20,14 +20,51 @@ private:
     
     struct verNode *verList;
     int find(TypeOfVer x);
+    void dfs(int start, const bool visited[]) const;
 public:
-
+    void dfs() const;
     adjList(int size, const TypeOfVer ver[]);
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
     void remove(TypeOfVer x, TypeOfVer y);
     bool exist(TypeOfVer x, TypeOfVer y) const;
     ~adjList();
 };
+
+template <class TypeofVer, class TypeOfEdge>
+void adjList<TypeofVer, TypeOfEdge>::dfs() const{
+    bool *visited = new bool[Vers];
+    for (int i = 0; i < Vers; ++i)
+    {
+        visited[i]=false;
+    }
+
+    cout << "dfs is ";
+    for (int i = 0; i < Vers; ++i)
+    {
+        if (visited[i])
+        {
+            continue;
+        }
+        dfs(i, visited);
+        cout << endl;
+    }    
+}
+
+template <class TypeofVer, class TypeOfEdge>
+void adjList<TypeofVer, TypeOfEdge>::dfs(int start, const bool visited[]) const {
+    edgeNode *p = verList[start].head;
+    cout << verList[start].ver << " ";
+    visited[start] = true;
+
+    while (p != nullptr )
+    {
+        if (visited[p->end] == false)
+        {
+            dfs(p->end, visited);
+        }
+        p = p->next;
+    }
+}
 
 template <class TypeofVer, class TypeOfEdge>
 int adjList<TypeofVer, TypeOfEdge>::find(TypeOfVer x) {
@@ -40,6 +77,8 @@ int adjList<TypeofVer, TypeOfEdge>::find(TypeOfVer x) {
     }
     return -1;
 }
+
+
 
 template <class TypeofVer, class TypeOfEdge>
 adjList<TypeofVer, TypeOfEdge>::adjList(int size, const TypeOfVer ver[]) {

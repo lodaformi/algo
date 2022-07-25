@@ -8,13 +8,50 @@ private:
     TypeOfEdge **edge; //二维数组
     TypeOfEdge noEdge;  //边不存在
     int find(TypeOfVer x) const;
+    void dfs(int start, const bool visited[]) const;
 public:
+    void dfs() const;
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
     void remove(TypeOfVer x, TypeOfVer y);
     bool exist(TypeOfVer x, TypeOfVer y) const;
     adjMatrix(int Vsize, const TypeOfVer verList[], const TypeOfEdge noEdgeFlag);
     ~adjMatrix();
 };
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjMatrix<TypeOfVer,TypeOfEdge>::dfs() const {
+    bool *visited = new bool[Vers];
+    for (int i = 0; i < Vers; ++i)
+    {
+        visited[i] = false;
+    }
+
+    cout << "dfs is ";
+    for (int i = 0; i < Vers; ++i)
+    {
+        if (visited[i] == true)
+        {
+            continue;
+        }
+        dfs(i, visited);
+        cout << endl;
+    }
+}
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjMatrix<TypeOfVer,TypeOfEdge>::dfs(int start, bool visited[]) const {
+    cout << start << " ";
+    visited[start] = true;
+
+    for (int col = 0; col < Vers; ++col)
+    {
+        if (edge[start][col] != noEdge && visited[col] == false)
+        {
+            dfs(col, visited);
+        }
+    }
+}
+
 
 template <class TypeOfVer, class TypeOfEdge>
 adjMatrix<TypeOfVer,TypeOfEdge>::adjMatrix(int Vsize, const TypeOfVer verList[], const TypeOfEdge noEdgeFlag) {

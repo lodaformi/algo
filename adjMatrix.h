@@ -1,4 +1,6 @@
+#include <iostream>
 #include "myGraph.h"
+using namespace std;
 
 template <class TypeOfVer, class TypeOfEdge>
 class adjMatrix: public myGraph<TypeOfVer, TypeOfEdge>
@@ -8,9 +10,9 @@ private:
     TypeOfEdge **edge; //二维数组
     TypeOfEdge noEdge;  //边不存在
     int find(TypeOfVer x) const;
-    void dfs(int start, const bool visited[]) const;
+    void dfs(int start, bool visited[]) const;
 public:
-    void dfs() const;
+    void dfs(TypeOfVer start) const;
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
     void remove(TypeOfVer x, TypeOfVer y);
     bool exist(TypeOfVer x, TypeOfVer y) const;
@@ -19,15 +21,19 @@ public:
 };
 
 template <class TypeOfVer, class TypeOfEdge>
-void adjMatrix<TypeOfVer,TypeOfEdge>::dfs() const {
-    bool *visited = new bool[Vers];
-    for (int i = 0; i < Vers; ++i)
+void adjMatrix<TypeOfVer,TypeOfEdge>::dfs(TypeOfVer start) const {
+    bool *visited = new bool[this->Vers];
+    for (int i = 0; i < this->Vers; ++i)
     {
         visited[i] = false;
     }
 
+    //指定一个起点先遍历一遍
     cout << "dfs is ";
-    for (int i = 0; i < Vers; ++i)
+    dfs(find(start), visited);
+    cout << endl;
+    //再看其他节是否未被遍历
+    for (int i = 0; i !=start && i < this->Vers; ++i)
     {
         if (visited[i] == true)
         {
@@ -40,10 +46,10 @@ void adjMatrix<TypeOfVer,TypeOfEdge>::dfs() const {
 
 template <class TypeOfVer, class TypeOfEdge>
 void adjMatrix<TypeOfVer,TypeOfEdge>::dfs(int start, bool visited[]) const {
-    cout << start << " ";
+    cout << ver[start] << " ";
     visited[start] = true;
 
-    for (int col = 0; col < Vers; ++col)
+    for (int col = 0; col < this->Vers; ++col)
     {
         if (edge[start][col] != noEdge && visited[col] == false)
         {
@@ -55,8 +61,8 @@ void adjMatrix<TypeOfVer,TypeOfEdge>::dfs(int start, bool visited[]) const {
 
 template <class TypeOfVer, class TypeOfEdge>
 adjMatrix<TypeOfVer,TypeOfEdge>::adjMatrix(int Vsize, const TypeOfVer verList[], const TypeOfEdge noEdgeFlag) {
-    Vers = Vsize;
-    Edges = 0;
+    this->Vers = Vsize;
+    this->Edges = 0;
     noEdge = noEdgeFlag;
 
     ver = new TypeOfVer[Vsize];
@@ -79,7 +85,7 @@ adjMatrix<TypeOfVer,TypeOfEdge>::adjMatrix(int Vsize, const TypeOfVer verList[],
 template <class TypeOfVer, class TypeOfEdge>
 adjMatrix<TypeOfVer,TypeOfEdge>::~adjMatrix() {
     delete []ver;
-    for (int i = 0; i < Vers; ++i)
+    for (int i = 0; i < this->Vers; ++i)
     {
         delete[] edge[i];
     }
@@ -88,7 +94,7 @@ adjMatrix<TypeOfVer,TypeOfEdge>::~adjMatrix() {
 
 template <class TypeOfVer, class TypeOfEdge>
 int adjMatrix<TypeOfVer, TypeOfEdge>::find(TypeOfVer x) const{
-    for (int i = 0; i < Vers; ++i)
+    for (int i = 0; i < this->Vers; ++i)
     {
         if (ver[i] == x)
         {
@@ -103,7 +109,7 @@ void adjMatrix<TypeOfVer,TypeOfEdge>::insert(TypeOfVer x, TypeOfVer y, TypeOfEdg
     int u = find(x);
     int v = find(y);
     edge[u][v] = w;
-    ++Edges;
+    ++this->Edges;
 }
 
 template <class TypeOfVer, class TypeOfEdge>
@@ -111,7 +117,7 @@ void adjMatrix<TypeOfVer,TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
     int u = find(x);
     int v = find(y);
     edge[u][v] = noEdge;
-    --Edges;
+    --this->Edges;
 }
 
 template <class TypeOfVer, class TypeOfEdge>

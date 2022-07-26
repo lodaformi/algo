@@ -32,14 +32,14 @@ public:
 
 template <class TypeofVer, class TypeOfEdge>
 void adjList<TypeofVer, TypeOfEdge>::dfs() const{
-    bool *visited = new bool[Vers];
-    for (int i = 0; i < Vers; ++i)
+    bool *visited = new bool[this->Vers];
+    for (int i = 0; i < this->Vers; ++i)
     {
         visited[i]=false;
     }
 
     cout << "dfs is ";
-    for (int i = 0; i < Vers; ++i)
+    for (int i = 0; i < this->Vers; ++i)
     {
         if (visited[i])
         {
@@ -68,7 +68,7 @@ void adjList<TypeofVer, TypeOfEdge>::dfs(int start, const bool visited[]) const 
 
 template <class TypeofVer, class TypeOfEdge>
 int adjList<TypeofVer, TypeOfEdge>::find(TypeOfVer x) {
-    for (int i = 0; i < Vers; ++i)
+    for (int i = 0; i < this->Vers; ++i)
     {
         if (verList[i].ver == x)
         {
@@ -82,8 +82,8 @@ int adjList<TypeofVer, TypeOfEdge>::find(TypeOfVer x) {
 
 template <class TypeofVer, class TypeOfEdge>
 adjList<TypeofVer, TypeOfEdge>::adjList(int size, const TypeOfVer ver[]) {
-    Vers = size;
-    Edges = 0;
+    this->Vers = size;
+    this->Edges = 0;
     verList = new struct verNode[size];
     for (int i = 0; i < size; ++i)
     {
@@ -94,7 +94,7 @@ adjList<TypeofVer, TypeOfEdge>::adjList(int size, const TypeOfVer ver[]) {
 template <class TypeofVer, class TypeOfEdge>
 adjList<TypeofVer, TypeOfEdge>::~adjList() {
     struct edgeNode *p;
-    for (int i = 0; i < Vers; ++i)
+    for (int i = 0; i < this->Vers; ++i)
     {
         while ((p = verList[i].head) != nullptr)
         {
@@ -109,7 +109,7 @@ template <class TypeofVer, class TypeOfEdge>
 void adjList<TypeofVer, TypeOfEdge>::insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w) {
     int u = find(x), v = find(y);
     verList[u].head = new edgeNode(v, w, verList[u].head);
-    ++Edges;
+    ++this->Edges;
 }
 
 //删除分两种情况，1.删除第一个节点 2.删除非第一个节点
@@ -127,7 +127,7 @@ void adjList<TypeofVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
     {
         verList[u].head = p->next;
         delete p;
-        --Edges;
+        --this->Edges;
         return;
     }
 
@@ -145,7 +145,7 @@ void adjList<TypeofVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
         q = p->next;
         p->next = q->next;
         delete q;
-        --Edges; 
+        --this->Edges;
     }
 }
 

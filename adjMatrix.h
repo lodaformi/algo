@@ -30,10 +30,12 @@ void adjMatrix<TypeOfVer,TypeOfEdge>::dfs(TypeOfVer start) const {
 
     //指定一个起点先遍历一遍
     cout << "dfs is ";
-    dfs(find(start), visited);
+    int u=find(start);
+    dfs(u, visited);
     cout << endl;
     //再看其他节是否未被遍历
-    for (int i = 0; i !=start && i < this->Vers; ++i)
+    // for (int i = 0; i !=u && i < this->Vers; ++i)
+    for (int i = 0; i < this->Vers; ++i)
     {
         if (visited[i] == true)
         {

@@ -6,7 +6,7 @@ template <class elemType>
 class sLinkList: public list<elemType>
 {
 private:
-    struct node
+    typedef struct node
     {
         elemType data;
         // sLinkList<elemType> *next;
@@ -14,7 +14,7 @@ private:
         node(const elemType& d, node *n=nullptr) {data=d; next=n;}
         node() : next(nullptr) {}
         ~node() {}
-    };
+    }node;
     int currentLength;
     node *head;
     // elemType data2;

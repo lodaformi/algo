@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 #include "myGraph.h"
 using namespace std;
 
@@ -13,12 +14,69 @@ private:
     void dfs(int start, bool visited[]) const;
 public:
     void dfs(TypeOfVer start) const;
+    void bfs(TypeOfVer start) const;
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
     void remove(TypeOfVer x, TypeOfVer y);
     bool exist(TypeOfVer x, TypeOfVer y) const;
     adjMatrix(int Vsize, const TypeOfVer verList[], const TypeOfEdge noEdgeFlag);
     ~adjMatrix();
 };
+
+template <class TypeofVer, class TypeOfEdge>
+void adjList<TypeofVer, TypeOfEdge>::bfs(TypeOfVer start) const{
+    bool *visited = new bool[this->Vers];
+    for (int i = 0; i < this->Vers; ++i)
+    {
+        visited[i] = false;
+    }
+    queue<int> que;
+    int currentNode = find(start);
+    que.push(currentNode);
+    //先从start指定起点做一次bfs遍历
+    while (!que.empty())
+    {
+        currentNode = que.front();
+        que.pop();
+        if (visited[currentNode] == true) continue;
+        cout << ver[currentNode] << " ";
+        visited[currentNode] = true;
+
+        //检查与currentNode相邻的边
+        for (int i = 0; i < this->Vers; ++i)
+        {
+            if (edge[currentNode][i] != noEdge && visited[i] == false)
+            {
+                que.push(i);
+            }
+        }
+    }
+    cout << endl;
+
+    //检查是否还有其他未遍历的节点
+    for (int i = 0; i < this->Vers; ++i)
+    {
+        if (visited[i] == true) continue;
+        que.push(i);
+        while (!que.empty())
+        {
+            currentNode = que.front();
+            que.pop();
+            if (visited[currentNode] == true) continue;
+            cout << ver[currentNode] << " ";
+            visited[currentNode] = true;
+
+            //检查与currentNode相邻的边
+            for (int i = 0; i < this->Vers; ++i)
+            {
+                if (edge[currentNode][i] != noEdge && visited[i] == false)
+                {
+                    que.push(i);
+                }
+            }
+        }
+        cout << endl;
+    }
+}
 
 template <class TypeOfVer, class TypeOfEdge>
 void adjMatrix<TypeOfVer,TypeOfEdge>::dfs(TypeOfVer start) const {

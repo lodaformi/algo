@@ -28,9 +28,9 @@ private:
     }eulerNode;
     
     verNode *verList;
-    int find(TypeOfVer x);
+    int myFind(TypeOfVer x);
     void dfs(int start, const bool visited[]) const;
-    void eulerCircuit(int start, edgeNode *&beg , edgeNode *&end);
+    void eulerCircuit(int start, eulerNode *&beg , eulerNode *&end);
 public:
     void eulerCircuit(TypeOfVer start);
     verNode* clone() const;
@@ -43,8 +43,8 @@ public:
     ~adjList();
 };
 
-template <class TypeofVer, class TypeOfEdge>
-void adjList<TypeofVer, TypeOfEdge>::eulerCircuit(TypeofVer start) {
+template <class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
     int degree;
     edgeNode *p;
 
@@ -52,7 +52,7 @@ void adjList<TypeofVer, TypeOfEdge>::eulerCircuit(TypeofVer start) {
     for (int i = 0; i < this->Vers; ++i)
     {
         degree = 0;
-        p = verList[u].head;
+        p = verList[i].head;
         while (p != nullptr)
         {
             ++degree;
@@ -67,7 +67,7 @@ void adjList<TypeofVer, TypeOfEdge>::eulerCircuit(TypeofVer start) {
     }
     
     //存在欧拉回路
-    int u=find(start);
+    int u=myFind(start);
     verNode *tmpList = clone();
 
     //欧拉回路的路径使用单链表表示
@@ -112,8 +112,8 @@ void adjList<TypeofVer, TypeOfEdge>::eulerCircuit(TypeofVer start) {
 }
 
 
-template <class TypeofVer, class TypeOfEdge>
-void adjList<TypeofVer, TypeOfEdge>::eulerCircuit(int start, eulerNode *&beg , eulerNode *&end) {
+template <class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(int start, eulerNode *&beg , eulerNode *&end) {
     beg = end = new eulerNode(start);   //将起始节点放入到欧拉路径中
     int nextNode;
     while (verList[start].head != nullptr)  //当该节点还有路径没有被访问
@@ -130,8 +130,8 @@ void adjList<TypeofVer, TypeOfEdge>::eulerCircuit(int start, eulerNode *&beg , e
     }
 }
 
-template <class TypeofVer, class TypeOfEdge>
-adjList<TypeofVer, TypeOfEdge>::verNode* adjList<TypeofVer, TypeOfEdge>::clone() const {
+template <class TypeOfVer, class TypeOfEdge>
+typename adjList<TypeOfVer, TypeOfEdge>::verNode* adjList<TypeOfVer, TypeOfEdge>::clone() const {
     verNode* tmp = new verNode[this->Vers]; //申请空间
     
     edgeNode* p; 
@@ -149,16 +149,16 @@ adjList<TypeofVer, TypeOfEdge>::verNode* adjList<TypeofVer, TypeOfEdge>::clone()
     return tmp;
 }
 
-template <class TypeofVer, class TypeOfEdge>
-void adjList<TypeofVer, TypeOfEdge>::bfs(TypeOfVer start) const{
+template <class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::bfs(TypeOfVer start) const{
     bool *visited = new bool[this->Vers];
-    for (int i = 0; i < this->Vers; ++i})
+    for (int i = 0; i < this->Vers; ++i)
     {
         visited[i] = false;
     }
     
     edgeNode *p;
-    int u = find(start), currentNode;
+    int u = myFind(start), currentNode;
     queue<int> que;
     que.push(u);
 
@@ -204,8 +204,8 @@ void adjList<TypeofVer, TypeOfEdge>::bfs(TypeOfVer start) const{
     }
 }
 
-template <class TypeofVer, class TypeOfEdge>
-void adjList<TypeofVer, TypeOfEdge>::dfs() const{
+template <class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::dfs() const{
     bool *visited = new bool[this->Vers];
     for (int i = 0; i < this->Vers; ++i)
     {
@@ -221,8 +221,8 @@ void adjList<TypeofVer, TypeOfEdge>::dfs() const{
     }    
 }
 
-template <class TypeofVer, class TypeOfEdge>
-void adjList<TypeofVer, TypeOfEdge>::dfs(int start, const bool visited[]) const {
+template <class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::dfs(int start, const bool visited[]) const {
     edgeNode *p = verList[start].head;
     cout << verList[start].ver << " ";
     visited[start] = true;
@@ -237,8 +237,8 @@ void adjList<TypeofVer, TypeOfEdge>::dfs(int start, const bool visited[]) const 
     }
 }
 
-template <class TypeofVer, class TypeOfEdge>
-int adjList<TypeofVer, TypeOfEdge>::find(TypeOfVer x) {
+template <class TypeOfVer, class TypeOfEdge>
+int adjList<TypeOfVer, TypeOfEdge>::myFind(TypeOfVer x) {
     for (int i = 0; i < this->Vers; ++i)
     {
         if (verList[i].ver == x)
@@ -251,8 +251,8 @@ int adjList<TypeofVer, TypeOfEdge>::find(TypeOfVer x) {
 
 
 
-template <class TypeofVer, class TypeOfEdge>
-adjList<TypeofVer, TypeOfEdge>::adjList(int size, const TypeOfVer ver[]) {
+template <class TypeOfVer, class TypeOfEdge>
+adjList<TypeOfVer, TypeOfEdge>::adjList(int size, const TypeOfVer ver[]) {
     this->Vers = size;
     this->Edges = 0;
     verList = new verNode[size];
@@ -262,8 +262,8 @@ adjList<TypeofVer, TypeOfEdge>::adjList(int size, const TypeOfVer ver[]) {
     }
 }
 
-template <class TypeofVer, class TypeOfEdge>
-adjList<TypeofVer, TypeOfEdge>::~adjList() {
+template <class TypeOfVer, class TypeOfEdge>
+adjList<TypeOfVer, TypeOfEdge>::~adjList() {
     edgeNode *p;
     for (int i = 0; i < this->Vers; ++i)
     {
@@ -276,17 +276,17 @@ adjList<TypeofVer, TypeOfEdge>::~adjList() {
     delete []verList;
 }
 
-template <class TypeofVer, class TypeOfEdge>
-void adjList<TypeofVer, TypeOfEdge>::insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w) {
-    int u = find(x), v = find(y);
+template <class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w) {
+    int u = myFind(x), v = myFind(y);
     verList[u].head = new edgeNode(v, w, verList[u].head);
     ++this->Edges;
 }
 
 //删除分两种情况，1.删除第一个节点 2.删除非第一个节点
-template <class TypeofVer, class TypeOfEdge>
-void adjList<TypeofVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
-    int u = find(x), v = find(y);
+template <class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
+    int u = myFind(x), v = myFind(y);
     edgeNode *p = verList[u].head, *q;
     if (p == nullptr) return;
     
@@ -315,9 +315,9 @@ void adjList<TypeofVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
     }
 }
 
-template <class TypeofVer, class TypeOfEdge>
-bool adjList<TypeofVer, TypeOfEdge>::exist(TypeOfVer x, TypeOfVer y) const {
-    int u = find(x), v = find(y);
+template <class TypeOfVer, class TypeOfEdge>
+bool adjList<TypeOfVer, TypeOfEdge>::exist(TypeOfVer x, TypeOfVer y) const {
+    int u = myFind(x), v = myFind(y);
     edgeNode *p = verList[u].head;
     while (p != nullptr && p->end != v)
         p=p->next;

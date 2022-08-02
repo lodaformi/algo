@@ -25,10 +25,12 @@ void findTwoOddNum(int arr[], int size) {
     }
 
     //res = a ^ b，因为a != b，所以a ^ b != 0
-    int res = x & (~x + 1);
+    int res = x & (~x + 1);         //提取出一个数最右边的1，其他位置全是0
     cout << "res " << res << endl;
     for (int i = 0; i < size; ++i)
     {
+        //用res将数组中的数分成两类，一类是该位置上是0，一类是该位置上是1,
+        //0和1都可以使用
         if ((res & arr[i]) == 0)
         {
             // cout << "i = " << i << endl;

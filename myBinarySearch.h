@@ -15,7 +15,8 @@ public:
         int L=0, R=size-1;
         while (L <R)
         {
-            int  mid = L + (R-L)/2;
+            // int mid = L + (R-L)/2;
+            int mid = L + ((R-L) >> 1);
             if (arr[mid] < x)
             {
                 L = mid + 1;            

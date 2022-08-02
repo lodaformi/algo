@@ -152,8 +152,10 @@ public:
         
         elemType pivot = arr[right];     //以最右边的值作为基准
         int left_idx = left - 1;          //定义左区域指针
-        int right_idx = right;    //定义右区域指针
+         //定义右区域指针，因pivot也是指向right，最后要交换到分界点，所以右边索引后续操作不会更改这个值
+        int right_idx = right;   
         int i=left;
+        //循环终止条件是，索引i与右区域索引重合
         while (i < right_idx)
         {
             if (arr[i] < pivot)
@@ -164,10 +166,11 @@ public:
                 swap(arr[i], arr[--right_idx]);
             }  else
             {
+                //等于pivot时，索引自增
                 ++i;
             }
         }
-        //将基准值放到右边区域的最左边
+        //此时i与right_idx重合，将基准值放到右边区域的最左边
         swap(arr[right_idx], arr[right]);
         
         //递归遍历左边

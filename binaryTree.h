@@ -1,5 +1,6 @@
 #include <queue>
 #include <stack>
+#include <unordered_map>
 #include "bTree.h"
 using namespace std;
 
@@ -61,7 +62,10 @@ class binaryTree : public bTree<T> {
         void midOrder_diedai() const;
         // 后序遍历_迭代
         void postOrder_diedai() const;
-
+        // 宽度遍历
+        void levelOrder() const;
+        // 求最大宽度
+        void width() const;
 }; 
 
 template <class T>
@@ -287,23 +291,30 @@ void binaryTree<T>::postOrder() const {
 //层次遍历
 template <class T>
 void binaryTree<T>::levelOrder() const {
-    queue<Node*> que;
-    Node *tmp;
-
     cout << "\n层次遍历： " ;
+    if (root == nullptr)
+    {
+        return;
+    }
+    
+    Node* tmp;
+    queue<Node*> que;
     que.push(root);
     while (!que.empty())
     {
-        tmp = que.pop();
+        tmp = que.front();
+        que.pop();
         cout << tmp->data << " ";
         if (tmp->left)
         {
             que.push(tmp->left);
         }
-        if (tmp->right) {
+        if(tmp->right) {
             que.push(tmp->right);
         }
+        
     }
+    cout << endl;
 }
 
 template <class T>
@@ -314,7 +325,7 @@ void binaryTree<T>::preOrder_diedai() const {
     }
     Node *tmp;
 
-    stack<Node> st;
+    stack<Node*> st;
     st.push(root);
     while (!st.empty())
     {
@@ -341,28 +352,28 @@ void binaryTree<T>::postOrder_diedai() const {
     }
 
     Node* tmp;
+    //申请两个栈，st1用于调整顺序，st2用于收集从st1出栈的元素，st2出栈的顺序就是二叉树后序遍历
     stack<Node*> st1, st2;
-    st1.push(root);
-    while (!st1.empty())
+    st1.push(root);         //根节点入栈
+    while (!st1.empty())    //当st1不为空
     {
-        tmp = st1.top();
-        st1.pop();
+        tmp = st1.top();     //获取栈顶元素
+        st1.pop();          //弹出栈顶元素
+        st2.push(tmp);      //弹出元素入到st2中
+        //st1先入栈tmp的左孩子，再入栈tmp的右孩子
+        //这样st1出栈顺序是头结点、右孩子、左孩子，
+        //以这样的顺序进入到st2，st2出栈顺序就是左右头，即为后序遍历顺序
         if (tmp->left)
         {
             st1.push(tmp->left);
         }
+        
         if (tmp->right)
         {
             st1.push(tmp->right);
         }
-        tmp = st1.top();
-        st1.pop();
-        st2.push(tmp);
-        tmp = st1.top();
-        st1.pop();
-        st2.push(tmp);
     }
-
+    //st2全部元素出栈
     while (!st2.empty())
     {
         tmp = st2.top();
@@ -370,4 +381,79 @@ void binaryTree<T>::postOrder_diedai() const {
         st2.pop();
     }
     cout << endl;
+}
+
+template <class T>
+void binaryTree<T>::midOrder_diedai() const {
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    stack<Node*> st;
+    Node* tmp = root;
+
+    //将整棵树的左边界一直入栈，在弹出的过程中，将右节点的左边界一直入栈
+    //刚开始栈为空，!st.empty()为假，tmp != nullptr为真，进入循环
+    while (!st.empty() || tmp != nullptr) 
+    {
+        if (tmp != nullptr)
+        {
+            st.push(tmp);
+            tmp = tmp->left;
+        }else {
+            tmp = st.top();
+            st.pop();
+            cout << tmp->data << " ";
+            tmp=tmp->right;
+        }
+    }
+    cout << endl;
+}
+
+template <class T>
+int binaryTree<T>::width() {
+    if (root == nullptr)
+    {
+        return 0;
+    }
+    Node *tmp;
+    int widthMax = -1;
+    int curLevel = 1;
+    int curLevelNodes = 0;  //当前层的节点个数
+
+    //使用unordered_map存储节点和其所在的层
+    unordered_map<Node*, int> levleMap;
+    queue<Node*> que;
+    levleMap.insert(pair<Node*, int>(root, 1)); //root节点所在层是1
+    que.push(root);
+    while (!que.empty())
+    {
+        tmp = que.front();
+        que.pop();
+        int myLevel = levleMap.at(tmp);
+        //如果当前节点所在的层与当前层一致，说明当前层还有节点未遍历，curLevelNodes自增1
+        if (myLevel == curLevel)
+        {
+            curLevelNodes++;
+        } else {
+            //如果当前节点所在层与当前层不一致，说明上一层节点已经遍历完，结算widthMax，记录较大值
+            //curLevel自增1，当前层的个数变为1，因为自身算一个节点
+            max(widthMax, curLevelNodes);
+            curLevel++;
+            curLevelNodes=1;
+        }
+        if (tmp->left)
+        {
+            que.push(tmp->left);
+            //在将左右子树节点加入到levleMap时，记录节点所在的层，是curLevel+1
+            levleMap.insert(pair<Node*, int>(tmp->left, curLevel+1));
+        }
+        if (tmp->right)
+        {
+            que.push(tmp->right);
+            levleMap.insert(pair<Node*, int>(tmp->right, curLevel+1));
+        }
+    }
+    return widthMax;
 }

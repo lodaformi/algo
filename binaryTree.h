@@ -1,4 +1,5 @@
 #include <queue>
+#include <stack>
 #include "bTree.h"
 using namespace std;
 
@@ -6,13 +7,13 @@ template<class T>
 class binaryTree : public bTree<T> {
     friend void printTree(const binaryTree &t, T flag);
     private:
-        struct Node {                //二叉树的结点类
+        typedef struct Node {                //二叉树的结点类
             Node  *left , *right ;               
             T data;                         
             Node() : left(nullptr), right(nullptr) { }
             Node(T item, Node *L = nullptr, Node * R =nullptr) : data(item), left(L), right(R) { }
             ~Node() {} 
-        };
+        }Node;
         Node *root;
         //查找x节点
         Node *find(T x, Node *t ) const;
@@ -54,6 +55,13 @@ class binaryTree : public bTree<T> {
         void levelOrder() const;
         //创建树
         void createTree(T flag);
+        // 前序遍历_迭代
+        void preOrder_diedai() const;
+        // 中序遍历_迭代
+        void midOrder_diedai() const;
+        // 后序遍历_迭代
+        void postOrder_diedai() const;
+
 }; 
 
 template <class T>
@@ -296,4 +304,70 @@ void binaryTree<T>::levelOrder() const {
             que.push(tmp->right);
         }
     }
+}
+
+template <class T>
+void binaryTree<T>::preOrder_diedai() const {
+    if (root == nullptr)
+    {
+        return;
+    }
+    Node *tmp;
+
+    stack<Node> st;
+    st.push(root);
+    while (!st.empty())
+    {
+        tmp = st.top();
+        cout << tmp->data << " ";
+        st.pop();
+        if (tmp->right)
+        {
+            st.push(tmp->right);
+        }
+        if (tmp->left)
+        {
+            st.push(tmp->left);
+        }
+    }
+    cout << endl;
+}
+
+template <class T>
+void binaryTree<T>::postOrder_diedai() const {
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    Node* tmp;
+    stack<Node*> st1, st2;
+    st1.push(root);
+    while (!st1.empty())
+    {
+        tmp = st1.top();
+        st1.pop();
+        if (tmp->left)
+        {
+            st1.push(tmp->left);
+        }
+        if (tmp->right)
+        {
+            st1.push(tmp->right);
+        }
+        tmp = st1.top();
+        st1.pop();
+        st2.push(tmp);
+        tmp = st1.top();
+        st1.pop();
+        st2.push(tmp);
+    }
+
+    while (!st2.empty())
+    {
+        tmp = st2.top();
+        cout << tmp->data << " ";
+        st2.pop();
+    }
+    cout << endl;
 }

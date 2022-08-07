@@ -33,4 +33,4 @@
 Footer
 
 #vscode config
-.vscode/*.json
+.vscode/*

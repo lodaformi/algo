@@ -39,9 +39,9 @@ public:
         Info *leftInfo = isFull(head->left);
         Info *rightInfo = isFull(head->right);
         int curHeight = max(leftInfo->height, rightInfo->height) + 1;
-        int curNum = leftInfo->nodes + rightInfo->nodes + 1;
+        int curNodes = leftInfo->nodes + rightInfo->nodes + 1;
 
-        return new Info(curHeight, curNum);
+        return new Info(curHeight, curNodes);
     }
 };
 

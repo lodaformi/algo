@@ -460,9 +460,8 @@ int binaryTree<T>::width() const{
     {
         tmp = que.front();
         que.pop();
-        int myLevel = levleMap.at(tmp);
         //如果当前节点所在的层与当前层一致，说明当前层还有节点未遍历，curLevelNodes自增1
-        if (myLevel == curLevel)
+        if (myLevel == levleMap.at(tmp))
         {
             curLevelNodes++;
         } else {

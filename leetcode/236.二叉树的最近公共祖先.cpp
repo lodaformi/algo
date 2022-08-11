@@ -78,7 +78,7 @@ public:
         {
             return root;
         }
-        //当p和q不在一个子树上时，这个子树返回的是nullptr
+        //当p和q不在一个子树上时，这个子树返回的不是nullptr
         TreeNode *leftLCA = lowestCommonAncestor(root->left, p, q);
         TreeNode *rightLCA = lowestCommonAncestor(root->right, p, q);
         //属于第二种情况

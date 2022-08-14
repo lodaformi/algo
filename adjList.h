@@ -249,8 +249,6 @@ int adjList<TypeOfVer, TypeOfEdge>::myFind(TypeOfVer x) {
     return -1;
 }
 
-
-
 template <class TypeOfVer, class TypeOfEdge>
 adjList<TypeOfVer, TypeOfEdge>::adjList(int size, const TypeOfVer ver[]) {
     this->Vers = size;

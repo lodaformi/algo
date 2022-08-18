@@ -29,7 +29,7 @@ private:
     
     verNode *verList;
     int myFind(TypeOfVer x) const;
-    void dfs(int start, const bool visited[]) const;
+    void dfs(int start, bool visited[]) const;
     void eulerCircuit(int start, eulerNode *&beg , eulerNode *&end);
 public:
     void eulerCircuit(TypeOfVer start);
@@ -222,7 +222,7 @@ void adjList<TypeOfVer, TypeOfEdge>::dfs() const{
 }
 
 template <class TypeOfVer, class TypeOfEdge>
-void adjList<TypeOfVer, TypeOfEdge>::dfs(int start, const bool visited[]) const {
+void adjList<TypeOfVer, TypeOfEdge>::dfs(int start, bool visited[]) const {
     edgeNode *p = verList[start].head;
     cout << verList[start].ver << " ";
     visited[start] = true;

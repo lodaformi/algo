@@ -21,10 +21,20 @@ private:
         edgeNode *head;
         verNode(edgeNode *h=nullptr):head(h) {}
     }verNode;
+    typedef struct EulerNode
+    {
+        TypeOfVer ver;
+        EulerNode *next;
+        EulerNod(TypeOfVer v, EulerNode *n=nullptr): ver(v), next(n) {}
+    }EulerNode;
+    
     verNode *verList;
     int myFind(TypeOfVer x) const;
     void dfs(TypeOfVer start, bool visited[]) const;
+    verNode* clone();
+    void eulerCircuit(TypeOfVer start, EulerNode *beg, EulerNode *end);
 public:
+    void eulerCircuit(TypeOfVer start);
     void dfs(TypeOfVer start);
     void bfs(TypeOfVer start);
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
@@ -34,6 +44,108 @@ public:
     adjList(const TypeOfVer vList[], int size);
     ~adjList();
 };
+
+template<class TypeOfVer, class TypeOfEdge>
+verNode* adjList<TypeOfVer, TypeOfEdge>::clone() {
+    verNode *tmp = new verNode[this->Vers];
+    edgeNode *ptr;
+    for (int i = 0; i < this->Vers; ++i)
+    {
+        tmp[i].ver = verList[i].ver;
+
+        ptr = verList[i].head;
+        while (ptr != nullptr)
+        {
+            //头插，这clone之后形成的图，每个顶点的单链表顺序与原图中的顺序是反的
+            tmp[i].head = new edgeNode(ptr->end, ptr->weight, tmp[i].head);
+            ptr = ptr->next;
+        }
+    }
+    return tmp;
+}
+
+template<class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start, EulerNode *beg, EulerNode *end) {
+    int u = myFind(start);
+    beg = end = new EulerNode(start);
+    edgeNode *ptr = verList[u].head;
+    //做一次dfs深度优先遍历，但不能回溯
+    while (ptr != nullptr)
+    {
+        //将路径保存到链表当中，尾插
+        end->next = new EulerNode(ptr->end);
+        end = end->next;
+
+        //删除图中已经被找过的路径
+        remove(start, end->ver);
+        remove(end->ver, start);
+
+        //更新下一次循环需要用到的条件，就不存在回溯的情况
+        start = end->ver;
+        u = myFind(start);
+        ptr = verList[u].head;
+    }
+}
+
+template<class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
+    //一：统计每个顶点的度数，若存在度为零或者奇数的顶点直接return
+    int degree;
+    edgeNode *ptr;
+    for (int i = 0; i < this->Vers; ++i)
+    {
+        degree = 0;
+        ptr = verList[i].head;
+        while (ptr != nullptr)
+        {
+            ++degree;
+            ptr = ptr->next;
+        }
+        if (degree == 0 || degree %2 != 0)
+        {
+            cout << "EulerCircuit doesn't exist!" << endl;
+            return;
+        }
+    }
+    //二：因在寻找欧拉回路的过程中要破坏图，先对原图拷贝一份，用于后续恢复
+    verNode *cloneGraph = clone();
+
+    //二：从起点开始寻找一段欧拉路径
+    int u;
+    EulerNode *beg, *end, *tbeg, *tend, *tptr, *del;
+    eulerCircuit(start, beg, end);
+
+    //三：检查是否这段路径上的顶点是否还存在未被访问的边，若有则与前面的路径进行拼接
+    tptr = beg;
+
+    while (tptr->next != nullptr) {
+        u = myFind(tptr->next->ver);
+        ptr = verList[u].head;
+        if (ptr != nullptr)
+        {
+            eulerCircuit(verList[u].ver, tbeg, tend);
+            //路径拼接
+            del = tptr->next;
+            tend->next = del->next;
+            tptr->next = tbeg;
+            delete del;
+        }
+        tptr = tptr->next;
+    }
+    //四：恢复被破坏的图
+    verList = cloneGraph;
+
+    //五：输出最终的欧拉回路
+    tptr = beg;
+    cout << "EulerCircuit is : " ;
+    while (tptr != nullptr)
+    {
+        cout << tptr->ver << " -> ";
+        tptr = tptr->next;
+    }
+    cout << endl;
+}
+
 
 // depth first search
 template<class TypeOfVer, class TypeOfEdge>

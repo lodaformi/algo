@@ -1,6 +1,8 @@
 #include "myGraph.h"
 #include <iostream>
 #include <queue>
+#include <stack>
+#include <unordered_set>
 using namespace std;
 
 template<class TypeOfVer, class TypeOfEdge>
@@ -25,17 +27,19 @@ private:
     {
         TypeOfVer ver;
         EulerNode *next;
-        EulerNod(TypeOfVer v, EulerNode *n=nullptr): ver(v), next(n) {}
+        EulerNode(TypeOfVer v, EulerNode *n=nullptr): ver(v), next(n) {}
     }EulerNode;
     
     verNode *verList;
     int myFind(TypeOfVer x) const;
     void dfs(TypeOfVer start, bool visited[]) const;
     verNode* clone();
-    void eulerCircuit(TypeOfVer start, EulerNode *beg, EulerNode *end);
+    //注意这里beg和end使用的是指针引用，也就是说指针的返回值要带回到上层函数中
+    void eulerCircuit(TypeOfVer start, EulerNode *&beg, EulerNode *&end);
 public:
     void eulerCircuit(TypeOfVer start);
     void dfs(TypeOfVer start);
+    void dfs_stack(TypeOfVer start);
     void bfs(TypeOfVer start);
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
     void remove(TypeOfVer x, TypeOfVer y);
@@ -46,15 +50,15 @@ public:
 };
 
 template<class TypeOfVer, class TypeOfEdge>
-verNode* adjList<TypeOfVer, TypeOfEdge>::clone() {
+typename adjList<TypeOfVer, TypeOfEdge>::verNode* adjList<TypeOfVer, TypeOfEdge>::clone() {
     verNode *tmp = new verNode[this->Vers];
     edgeNode *ptr;
     for (int i = 0; i < this->Vers; ++i)
     {
-        tmp[i].ver = verList[i].ver;
+        tmp[i].ver = verList[i].ver;        //复制顶点
 
         ptr = verList[i].head;
-        while (ptr != nullptr)
+        while (ptr != nullptr)  //复制该顶点的单链表
         {
             //头插，这clone之后形成的图，每个顶点的单链表顺序与原图中的顺序是反的
             tmp[i].head = new edgeNode(ptr->end, ptr->weight, tmp[i].head);
@@ -65,25 +69,28 @@ verNode* adjList<TypeOfVer, TypeOfEdge>::clone() {
 }
 
 template<class TypeOfVer, class TypeOfEdge>
-void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start, EulerNode *beg, EulerNode *end) {
-    int u = myFind(start);
+void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start, EulerNode *&beg, EulerNode *&end) {
+    int startIdx = myFind(start);
+    TypeOfVer nextVer;
     beg = end = new EulerNode(start);
-    edgeNode *ptr = verList[u].head;
     //做一次dfs深度优先遍历，但不能回溯
-    while (ptr != nullptr)
+    while (verList[startIdx].head != nullptr)
     {
+        nextVer = verList[startIdx].head->end;
+
         //将路径保存到链表当中，尾插
-        end->next = new EulerNode(ptr->end);
+        end->next = new EulerNode(nextVer);
         end = end->next;
 
-        //删除图中已经被找过的路径
-        remove(start, end->ver);
-        remove(end->ver, start);
+        //删除图中已经被找过的路径，无向图中边会存储两次，所以删两次
+        remove(start, nextVer);
+        remove(nextVer, start);
 
         //更新下一次循环需要用到的条件，就不存在回溯的情况
-        start = end->ver;
-        u = myFind(start);
-        ptr = verList[u].head;
+        //下面两条语句不能合并
+        //必须更新start，因为下一次remove是已nextVer为起点
+        start=nextVer;
+        startIdx = myFind(start);
     }
 }
 
@@ -115,13 +122,13 @@ void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
     EulerNode *beg, *end, *tbeg, *tend, *tptr, *del;
     eulerCircuit(start, beg, end);
 
-    //三：检查是否这段路径上的顶点是否还存在未被访问的边，若有则与前面的路径进行拼接
+    //三：检查这段路径上的顶点是否还存在未被访问的边，若有则与已经形成的路径进行拼接
     tptr = beg;
 
+    //路径拼接时要删除一个节点，所以while站在前一个节点判断
     while (tptr->next != nullptr) {
         u = myFind(tptr->next->ver);
-        ptr = verList[u].head;
-        if (ptr != nullptr)
+        if (verList[u].head != nullptr)
         {
             eulerCircuit(verList[u].ver, tbeg, tend);
             //路径拼接
@@ -133,19 +140,21 @@ void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
         tptr = tptr->next;
     }
     //四：恢复被破坏的图
+    delete []verList;
     verList = cloneGraph;
 
-    //五：输出最终的欧拉回路
+    //五：输出最终的欧拉回路，输出的同时将节点删除
     tptr = beg;
     cout << "EulerCircuit is : " ;
-    while (tptr != nullptr)
+    while (beg != nullptr)
     {
-        cout << tptr->ver << " -> ";
-        tptr = tptr->next;
+        cout << beg->ver << " -> ";
+        tptr = beg;
+        beg = beg->next;
+        delete tptr;
     }
     cout << endl;
 }
-
 
 // depth first search
 template<class TypeOfVer, class TypeOfEdge>
@@ -156,14 +165,6 @@ void adjList<TypeOfVer, TypeOfEdge>::dfs(TypeOfVer start) {
     cout << "dfs is: ";
     dfs(start, visited);
     cout << endl;
-
-    //看是否存在其他联通分量
-    for (int i = 0; i < this->Vers; ++i)
-    {
-        if (visited[i] == true) continue;
-        dfs(verList[i].ver, visited);
-        cout << endl;            
-    }
 }   
 
 template<class TypeOfVer, class TypeOfEdge>
@@ -187,18 +188,59 @@ void adjList<TypeOfVer, TypeOfEdge>::dfs(TypeOfVer start, bool visited[]) const{
     }
 } 
 
+template<class TypeOfVer, class TypeOfEdge>
+void adjList<TypeOfVer, TypeOfEdge>::dfs_stack(TypeOfVer start) {
+    TypeOfVer node;
+    edgeNode *ptr;
+    unordered_set<TypeOfVer> visited;
+    stack<TypeOfVer> manual_stack;
+    
+    cout << "dfs_stack is: ";
+    manual_stack.push(start);
+    visited.emplace(start);
+
+    cout << start << " ";
+    while (!manual_stack.empty())
+    {
+        node = manual_stack.top();
+        manual_stack.pop();
+        //不在弹出栈的时候访问元素，因为当一个顶点有多个邻居时会多次入栈、出栈
+        // cout << node << " ";
+
+        ptr = verList[myFind(node)].head;
+        while (ptr != nullptr)
+        {
+            //如果visited中不存在邻居顶点，则访问该邻居
+            if (visited.find(ptr->end) == visited.end())
+            {
+                //必须把该顶点重新入栈，可以实现回溯
+                manual_stack.push(node);
+                //将邻居入栈
+                manual_stack.push(ptr->end);
+                //在入栈的时候访问
+                cout << ptr->end << " ";
+                //更新访问标记
+                visited.emplace(ptr->end);
+                break;  //只访问该顶点的一个邻居
+            }
+            ptr = ptr->next;
+        }
+    }
+    cout << endl;
+}
+
 // width first search
 template<class TypeOfVer, class TypeOfEdge>
 void adjList<TypeOfVer, TypeOfEdge>::bfs(TypeOfVer start) {
-    int u = myFind(start);
-    bool visited[this->Vers] = {false}; 
-    
-    TypeOfVer currentVer= verList[u].ver;
+    TypeOfVer currentVer;
     edgeNode *ptr;
+    int u = myFind(start);
+    //如果用unorder_set实现visited功能，可以避免元素重复入队
+    bool visited[this->Vers] = {false};     
     queue<TypeOfVer> que;
-    que.push(currentVer);
+    que.push(start);
 
-    // 从出发点开始一次bfs
+    // 从源点开始一次bfs
     cout << "bfs is: ";
     while (!que.empty())
     {
@@ -233,35 +275,6 @@ void adjList<TypeOfVer, TypeOfEdge>::bfs(TypeOfVer start) {
         }
     }
     cout << endl;
-
-    // 为防止存在其他联通分量，检查是否存在这样的点
-    for (int i = 0; i < this->Vers; ++i)
-    {
-        if (visited[i] == true) continue;
-        currentVer= verList[i].ver;
-        que.push(currentVer);
-
-        while (!que.empty())
-        {
-            currentVer = que.front();
-            que.pop();
-            u = myFind(currentVer);
-            if (visited[u] == true) continue;
-            cout << currentVer << " ";
-            visited[u]=true;
-
-            ptr = verList[u].head;
-            while (ptr != nullptr)
-            {
-                if (visited[myFind(ptr->end)] == false)
-                {
-                    que.push(ptr->end);
-                }
-                ptr = ptr->next;
-            }
-        }
-        cout << endl;
-    }
 }
 
 
@@ -366,7 +379,7 @@ void adjList<TypeOfVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
         delete ptr;
         return;
     }
-    //如果不是第一个节点
+    //如果不是第一个节点，删除节点须站在前一个节点上，所以判断是ptr->next
     edgeNode *tmp;
     while (ptr->next != nullptr && ptr->next->end != y)
         ptr = ptr->next;

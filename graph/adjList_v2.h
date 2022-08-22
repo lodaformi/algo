@@ -9,26 +9,26 @@ template<class TypeOfVer, class TypeOfEdge>
 class adjList: public myGraph<TypeOfVer, TypeOfEdge>
 {
 private:
-    typedef struct edgeNode
+    struct edgeNode
     {
         TypeOfVer end;
         TypeOfEdge weight;
         edgeNode* next;
         edgeNode(TypeOfVer e, TypeOfEdge w, edgeNode *n=nullptr):end(e), weight(w), next(n) {}
-    }edgeNode;
+    };
 
-    typedef struct verNode
+    struct verNode
     {
         TypeOfVer ver;
         edgeNode *head;
         verNode(edgeNode *h=nullptr):head(h) {}
-    }verNode;
-    typedef struct EulerNode
+    };
+    struct EulerNode
     {
         TypeOfVer ver;
         EulerNode *next;
         EulerNode(TypeOfVer v, EulerNode *n=nullptr): ver(v), next(n) {}
-    }EulerNode;
+    };
     
     verNode *verList;
     int myFind(TypeOfVer x) const;
@@ -235,24 +235,21 @@ void adjList<TypeOfVer, TypeOfEdge>::bfs(TypeOfVer start) {
     TypeOfVer currentVer;
     edgeNode *ptr;
     int u = myFind(start);
-    //如果用unorder_set实现visited功能，可以避免元素重复入队
+
     bool visited[this->Vers] = {false};     
     queue<TypeOfVer> que;
-    que.push(start);
 
-    // 从源点开始一次bfs
+    que.push(start);
+    visited[u] = true;
+
     cout << "bfs is: ";
     while (!que.empty())
     {
         currentVer = que.front();
         que.pop();
-        u = myFind(currentVer);
-        //这条判断语句要加上，具体理由见下方while循环处
-        //是为了过滤重复添加的元素，这样后面的元素就不会重复输出
-        if (visited[u] == true) continue;
-        cout << currentVer << " ";
-        visited[u]=true;
+        cout << currentVer << " ";      //打印出队元素
 
+        u = myFind(currentVer);
         ptr = verList[u].head;
         //这样写不对，在碰到一个false后，直接退出了while循环，后续的元素都无法判断
         // while (ptr != nullptr && visited[myFind(ptr->end)] == false)
@@ -261,22 +258,18 @@ void adjList<TypeOfVer, TypeOfEdge>::bfs(TypeOfVer start) {
         //     ptr = ptr->next;
         // }
 
-        //要判断所有的邻居元素，在没有被访问，即false时才加入队列
-        //就造成一个问题，已经在队中的元素在未弹出处理(打印)时，visited标记还是false
-        //这样会添加重复的元素，特别是对于无向图而言，所以在上面弹出元素时还要再次判断标记
-        //这样后面的元素就不会重复输出
         while (ptr != nullptr)
         {
             if (visited[myFind(ptr->end)] == false)
             {
                 que.push(ptr->end);
+                visited[myFind(ptr->end)]=true;     //入队的时候，设置访问标记为true
             }
             ptr = ptr->next;
         }
     }
     cout << endl;
 }
-
 
 template<class TypeOfVer, class TypeOfEdge>
 void adjList<TypeOfVer, TypeOfEdge>::printGraph() {

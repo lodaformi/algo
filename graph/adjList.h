@@ -7,25 +7,25 @@ template <class TypeOfVer, class TypeOfEdge>
 class adjList : public myGraph<TypeOfVer, TypeOfEdge>
 {
 private:
-    typedef struct edgeNode
+    struct edgeNode
     {
         TypeOfVer end;
         TypeOfEdge weight;
         edgeNode *next;
         edgeNode(TypeOfVer e, TypeOfEdge w, edgeNode *n = nullptr): end(e), weight(w), next(n) {}
-    }edgeNode;
-    typedef struct verNode
+    };
+    struct verNode
     {
         TypeOfVer ver;
         edgeNode *head;
         verNode(edgeNode *h = nullptr):head(h) {}
-    }verNode;
-    typedef struct eulerNode
+    };
+    struct eulerNode
     {
         int nodeNum;
         eulerNode *next;
         eulerNode(int ver, eulerNode *n=nullptr):nodeNum(ver), next(n) {} 
-    }eulerNode;
+    };
     
     verNode *verList;
     int myFind(TypeOfVer x) const;
@@ -86,7 +86,7 @@ void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
         }
         //如果上面的while循环退出条件是tp == nullptr，则说明第一次找的欧拉回路包含了所有的边
         if (tp == nullptr) break;   //退出外层while死循环
-        //如果内存while循环是break出来的，说明第一次找的路径不全，还有边未被访问到
+        //如果内层while循环是break出来的，说明第一次找的路径不全，还有边未被访问到
         //则从这个起点开始找一次路径
         tq = tp->next;
         eulerCircuit(tq->nodeNum, tb, te);
@@ -100,7 +100,7 @@ void adjList<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
     verList = tmpList;    
 
     //输出欧拉回路，遍历路径的同时删除节点
-    cout << "euler circuit is: ";
+    cout << "EulerCircuit is: ";
     while (beg != nullptr)
     {
         cout << verList[beg->nodeNum].ver << " ";

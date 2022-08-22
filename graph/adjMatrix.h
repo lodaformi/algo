@@ -37,9 +37,9 @@ void adjList<TypeofVer, TypeOfEdge>::bfs(TypeOfVer start) const{
     {
         currentNode = que.front();
         que.pop();
-        if (visited[currentNode] == true) continue;
+        // if (visited[currentNode] == true) continue;
         cout << ver[currentNode] << " ";
-        visited[currentNode] = true;
+        // visited[currentNode] = true;
 
         //检查与currentNode相邻的边
         for (int i = 0; i < this->Vers; ++i)
@@ -47,35 +47,11 @@ void adjList<TypeofVer, TypeOfEdge>::bfs(TypeOfVer start) const{
             if (edge[currentNode][i] != noEdge && visited[i] == false)
             {
                 que.push(i);
+                visited[i] = true;
             }
         }
     }
     cout << endl;
-
-    //检查是否还有其他未遍历的节点
-    for (int i = 0; i < this->Vers; ++i)
-    {
-        if (visited[i] == true) continue;
-        que.push(i);
-        while (!que.empty())
-        {
-            currentNode = que.front();
-            que.pop();
-            if (visited[currentNode] == true) continue;
-            cout << ver[currentNode] << " ";
-            visited[currentNode] = true;
-
-            //检查与currentNode相邻的边
-            for (int i = 0; i < this->Vers; ++i)
-            {
-                if (edge[currentNode][i] != noEdge && visited[i] == false)
-                {
-                    que.push(i);
-                }
-            }
-        }
-        cout << endl;
-    }
 }
 
 template <class TypeOfVer, class TypeOfEdge>
@@ -91,17 +67,6 @@ void adjMatrix<TypeOfVer,TypeOfEdge>::dfs(TypeOfVer start) const {
     int u=find(start);
     dfs(u, visited);
     cout << endl;
-    //再看其他节是否未被遍历
-    // for (int i = 0; i !=u && i < this->Vers; ++i)
-    for (int i = 0; i < this->Vers; ++i)
-    {
-        if (visited[i] == true)
-        {
-            continue;
-        }
-        dfs(i, visited);
-        cout << endl;
-    }
 }
 
 template <class TypeOfVer, class TypeOfEdge>
@@ -166,28 +131,20 @@ int adjMatrix<TypeOfVer, TypeOfEdge>::find(TypeOfVer x) const{
 
 template <class TypeOfVer, class TypeOfEdge>
 void adjMatrix<TypeOfVer,TypeOfEdge>::insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w) {
-    int u = find(x);
-    int v = find(y);
+    int u = find(x), v = find(y);
     edge[u][v] = w;
     ++this->Edges;
 }
 
 template <class TypeOfVer, class TypeOfEdge>
 void adjMatrix<TypeOfVer,TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
-    int u = find(x);
-    int v = find(y);
+    int u = find(x), v = find(y);
     edge[u][v] = noEdge;
     --this->Edges;
 }
 
 template <class TypeOfVer, class TypeOfEdge>
 bool adjMatrix<TypeOfVer,TypeOfEdge>::exist(TypeOfVer x, TypeOfVer y) const {
-    int u = find(x);
-    int v = find(y);
-    if (edge[u][v] != noEdge)
-    {
-        return true;
-    }else {
-        return false;
-    }
+    int u = find(x), v = find(y);
+    return edgeList[u][v] != noEdge ? true : false;
 }

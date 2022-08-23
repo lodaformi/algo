@@ -2,6 +2,7 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <cstring>
 using namespace std;
 
 template <class TypeOfVer, class TypeOfEdge>
@@ -25,6 +26,7 @@ private:
 public:
     void eulerCircuit(TypeOfVer start);
     void bfs(TypeOfVer start);
+    void bfs_depthOne();
     void dfs_digui(TypeOfVer start);
     void dfs_stack(TypeOfVer start);
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
@@ -34,6 +36,46 @@ public:
     adjMatrix(const TypeOfVer *arr, int size, const TypeOfEdge noEdgeFlag);
     ~adjMatrix();
 };
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjMatrix<TypeOfVer, TypeOfEdge>::bfs_depthOne() {
+    queue<TypeOfVer> que;
+    bool visited[this->Vers] = {false};
+    TypeOfVer start, curNode;
+    int depth, edgeCount, idx;
+
+    for(int i=0; i<this->Vers; ++i) {
+        memset(visited, false, sizeof(visited));
+        edgeCount = 0;
+        depth = 0;
+        start = verList[i];
+        que.push(start);
+        visited[i] = true;
+
+        while(!que.empty()) {
+            curNode = que.front();
+            que.pop();
+            idx = myFind(curNode);
+            if(curNode != start) {
+                cout << curNode << " ";
+            }
+            if(depth == 1) continue;
+            ++depth;
+            for(int col=0; col < this->Vers; ++col) {
+                if (edgeList[idx][col] != noEdge && visited[col] == false) {
+                // if (edgeList[i][col] != noEdge) {
+                    que.push(verList[col]);
+                    visited[col] = true;
+                    ++edgeCount;
+                }
+            }
+            if(edgeCount == 0) {
+                cout << "none";
+            }
+        }
+        cout << endl;
+    }
+}
 
 template <class TypeOfVer, class TypeOfEdge>
 TypeOfEdge** adjMatrix<TypeOfVer, TypeOfEdge>::clone() {
@@ -101,6 +143,7 @@ void adjMatrix<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
     }
     
     //clone原图
+    int allEdges = this->Edges;
     TypeOfEdge **cloneGraph = clone();
 
     //从一个顶点出发找一条路径，保存到单链表中
@@ -136,6 +179,7 @@ void adjMatrix<TypeOfVer, TypeOfEdge>::eulerCircuit(TypeOfVer start) {
     delete[] edgeList;
     
     edgeList = cloneGraph;
+    this->Edges = allEdges;
     
     //输出欧拉路径，同时将链表删除
     ptr = beg;
@@ -266,8 +310,13 @@ int adjMatrix<TypeOfVer, TypeOfEdge>::myFind(TypeOfVer x) const{
 template <class TypeOfVer, class TypeOfEdge>
 void adjMatrix<TypeOfVer, TypeOfEdge>::insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w) {
     int u = myFind(x), v=myFind(y);
-    edgeList[u][v] = w;
-    ++this->Edges;
+    //字节自身不指向自身
+    //防止重复写入同一条边，引发边数重复计数
+    if (u != v && edgeList[u][v] == noEdge)   
+    {
+        edgeList[u][v] = w;
+        ++this->Edges;       
+    }
 }
 
 template <class TypeOfVer, class TypeOfEdge>

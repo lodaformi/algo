@@ -12,24 +12,24 @@ class small
 {
 private:
     int size;
-    int *arr;
+    int *data;
     int *copy;
     int smallRes;
 public:
     small(int *a, int s) {
         smallRes = 0;
         size=s;
-        arr = new int[size];
+        copy = new int[size];
+        data = new int[size];
         for (int i = 0; i < size; ++i)
         {
-            arr[i] = a[i];
+            data[i] = a[i];
         }
     }
 
     void smallSum(int left, int right) {
-        if (arr == nullptr || size < 2) return;
+        if (data == nullptr || size < 2) return;
         if (left >= right) return;
-        copy = new int[size];
 
         int mid = left + ((right - left) >> 1);
         smallSum(left, mid);
@@ -41,7 +41,7 @@ public:
     void merge(int left, int mid, int right) {
         for (int i = left; i <= right; ++i)
         {
-            copy[i] = arr[i];
+            copy[i] = data[i];
         }
 
         int i=left, aIdx=left, bIdx=mid+1;
@@ -50,32 +50,40 @@ public:
             //只有在左边小于右边的时候才记录小和，
             smallRes += copy[aIdx] < copy[bIdx] ? copy[aIdx] * (right-bIdx+1) : 0;
             //值相等时必须是右边移动，因为左边这个相等的值还可能会产生小和
-            arr[i++] = copy[aIdx] < copy[bIdx] ? copy[aIdx++] : copy[bIdx++];
+            data[i++] = copy[aIdx] < copy[bIdx] ? copy[aIdx++] : copy[bIdx++];
 
             // if (copy[aIdx] < copy[bIdx])
             // {
             //     //只有在左边小于右边的时候才记录小和，
             //     smallRes += copy[aIdx] * (right-bIdx+1);
-            //     arr[i++] = copy[aIdx++];
+            //     data[i++] = copy[aIdx++];
             // }else{
             //     //值相等时必须是右边移动，因为左边这个相等的值还可能会产生小和
-            //     arr[i++] = copy[bIdx++];
+            //     data[i++] = copy[bIdx++];
             // }
         }
         //说明bIdx已经越界
         while (aIdx <= mid)
         {
-            arr[i++] = copy[aIdx++];
+            data[i++] = copy[aIdx++];
         }
         //说明aIdx已经越界
         while (bIdx <= right)
         {
-            arr[i++] = copy[bIdx++];
+            data[i++] = copy[bIdx++];
         }
     }
 
     void printSmallRes() {
         cout << "small res : " << smallRes << endl;
+    }
+
+    void printData() {
+        for (int i = 0; i < size; ++i)
+        {
+            cout << data[i] << " ";
+        }
+        cout << endl;
     }
 };
 
@@ -156,26 +164,41 @@ public:
     }
 
     void printArr() {
-    for (int i = 0; i < size; ++i)
-    {
-        cout << arr[i]  << " ";
+        for (int i = 0; i < size; ++i)
+        {
+            cout << arr[i]  << " ";
+        }
+        cout << endl;
     }
-    cout << endl;
+
+    int findMaxUsingDigui(int left, int right) {
+        if (left == right) return arr[left];
+        int mid = left + ((right-left)>>1);
+        int leftMax = findMaxUsingDigui(left, mid);
+        int rightMax = findMaxUsingDigui(mid+1, right);
+
+        return leftMax > rightMax ? leftMax : rightMax;
     }
+
 };
 
 int main( ) {
     int arr[] = {2,1,5,3,0};
-    // int arr[] = {3,2,4,5,2,1};
+    // int arr[] = {5,1,2,7,4};
+    //  int arr[] = {3,1,9,5,0,2,1};
     int len = sizeof(arr)/sizeof(arr[0]);
-    // small s(arr, len);
-    // s.smallSum(0, len-1);
-    // s.printSmallRes();
+    small s(arr, len);
+    s.smallSum(0, len-1);
+    s.printSmallRes();
+    s.printData();
 
-    reversePair rp(arr, len);
-    rp.rpFun(0,len-1);
-    rp.printNum();
-    rp.printArr();
+    // reversePair rp(arr, len);
+    // rp.rpFun(0,len-1);
+    // rp.printNum();
+    // rp.printArr();
+
+    // int max = rp.findMaxUsingDigui(0, len-1);
+    // cout << "max " << max << endl;
 
     system("pause");
     return 0;

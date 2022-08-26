@@ -19,11 +19,10 @@ public:
     elemType getHead() {return data[(front+1)%maxSize];}
     void percolateDown(int hole);
     elemType deQueue();
-    void percolateDown(int hole);
 };
 
 template <class elemType>
-priorityQueue<elemType>::seqQueue(int initSize) {
+priorityQueue<elemType>::priorityQueue(int initSize) {
     data = new elemType[initSize];
     maxSize = initSize;
     front = rear = 0;

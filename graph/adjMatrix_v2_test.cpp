@@ -61,6 +61,26 @@ int main() {
     am2.eulerCircuit('c');
     am2.printGraph();
 
+    cout <<"-------------------------" << endl;
+
+    // 请补全代码，实现题目功能
+    int n,m, start, end;
+    cin >> n >> m;
+    int *arr3 = new int[n];
+    for(int i=0; i<n; ++i) {
+        arr3[i] = i+1;
+    }
+    adjMatrix<int, int> am3(arr3, n, 0);
+
+    for(int i=0; i<m; ++i) {
+        cin >> start >> end;
+        am3.insert(start, end, 1);
+        am3.insert(end, start, 1);
+    }
+
+    am3.printGraph();
+    am3.bfs_depthOne();
+
     system("pause");
     return 0;
 }

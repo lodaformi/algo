@@ -183,8 +183,8 @@ public:
 };
 
 int main( ) {
-    int arr[] = {2,1,5,3,0};
-    // int arr[] = {5,1,2,7,4};
+    // int arr[] = {2,1,5,3,0};
+    int arr[] = {5,1,2,2,4};
     //  int arr[] = {3,1,9,5,0,2,1};
     int len = sizeof(arr)/sizeof(arr[0]);
     small s(arr, len);

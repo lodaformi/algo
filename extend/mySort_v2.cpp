@@ -214,16 +214,17 @@ void mySort::printData() {
 }
 
 int main() {
-    int arr[] = {4,6,1,6,3,9,10,6,8,5};
+    // int arr[] = {4,6,1,6,3,9,10,6,8,5};
+    int arr[] = {5,1,2,2,4};
     int len = sizeof(arr)/ sizeof(arr[0]);
     mySort ms(arr, len);
-    // ms.mergeSort(0, len-1);
+    ms.mergeSort(0, len-1);
     // ms.selectSort();
     // ms.bubbleSort();
     // ms.insertSort();
     // ms.quickSort_v1(0, len-1);
     // ms.quickSort_v2(0, len-1);
-    ms.quickSort_v3(0, len-1);
+    // ms.quickSort_v3(0, len-1);
     ms.printData();
 
     system("pause");

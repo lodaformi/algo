@@ -187,15 +187,15 @@ int main( ) {
     int arr[] = {5,1,2,2,4};
     //  int arr[] = {3,1,9,5,0,2,1};
     int len = sizeof(arr)/sizeof(arr[0]);
-    small s(arr, len);
-    s.smallSum(0, len-1);
-    s.printSmallRes();
-    s.printData();
+    // small s(arr, len);
+    // s.smallSum(0, len-1);
+    // s.printSmallRes();
+    // s.printData();
 
-    // reversePair rp(arr, len);
-    // rp.rpFun(0,len-1);
-    // rp.printNum();
-    // rp.printArr();
+    reversePair rp(arr, len);
+    rp.rpFun(0,len-1);
+    rp.printNum();
+    rp.printArr();
 
     // int max = rp.findMaxUsingDigui(0, len-1);
     // cout << "max " << max << endl;

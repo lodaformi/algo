@@ -8,8 +8,6 @@ using namespace std;
 判断一个二叉树是否是搜索二叉树
 严格的搜索二叉树是左小右大，中序遍历是递增序列
 */
-
-
 class bTree
 {
 private:
@@ -22,7 +20,6 @@ private:
     }Node;
     Node *root;
 public:
-    
     bTree() {root=nullptr;}
     bTree(int d) {
         root = new Node(d);
@@ -65,9 +62,9 @@ public:
         Node *tmp = head;
         int preData = INT_MIN;
         stack<int> st;
-        while (!st.empty() || tmp != nullptr )
+        while (!st.empty() || tmp != nullptr)
         {
-            //左边界入栈，只至为空  
+            //左边界入栈，直至为空  
             if (tmp != nullptr)
             {
                 st.push(tmp);
@@ -108,8 +105,8 @@ public:
         {
             return nullptr;
         }
-        checkNode* leftIsBST = checkBST2(head->left);
-        checkNode* rightIsBST = checkBST2(head->right);
+        checkNode* leftIsBST = checkBST3(head->left);
+        checkNode* rightIsBST = checkBST3(head->right);
         //先把最小值和最大值设为自己，因为当一个节点没有左右子树的时候，最大值和最小值都是自己
         int mi = head->data;
         int ma = head->data;

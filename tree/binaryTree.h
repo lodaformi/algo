@@ -8,13 +8,13 @@ template<class T>
 class binaryTree : public bTree<T> {
     // friend void printTree(const binaryTree &t, T flag);
     private:
-        typedef struct Node {                //二叉树的结点类
+        struct Node {                //二叉树的结点类
             Node  *left , *right ;               
             T data;                         
             Node() : left(nullptr), right(nullptr) { }
             Node(T item, Node *L = nullptr, Node * R =nullptr) : data(item), left(L), right(R) { }
             ~Node() {} 
-        }Node;
+        };
         Node *root;
         //查找x节点
         Node *find(T x, Node *t ) const;
